@@ -1,4 +1,5 @@
 # Android-RDX
+[![](https://jitpack.io/v/flipkart-incubator/android-RDX.svg)](https://jitpack.io/#flipkart-incubator/android-RDX)
 
 ### Redux on Android
 This is a port of the [Redux](https://redux.js.org/) paradigm for building apps, built specifically for use on the Android platform. It uses native Android constructs including Lifecycle Aware components, LiveData, ViewModels etc to achieve the Redux spec.
@@ -145,6 +146,7 @@ Once this dispatch is consumed by the Store & a new state has been reduced, the 
         }
     }
 ````
+
 
 ## License
 
