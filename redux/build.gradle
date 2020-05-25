@@ -122,57 +122,6 @@ configure(install.repositories.mavenInstaller) {
     }
 }
 
-
-//publishing {
-//    repositories {
-//        maven {
-//            url ARTIFACTORY_REPO_URL + "libs-${project.version.endsWith('-SNAPSHOT') ? 'snapshots' : 'release'}-local"
-//        }
-//    }
-//    publications {
-//        maven(MavenPublication) {
-//            groupId ARTIFACTORY_GROUP
-//            artifactId 'redux'
-//            version VERSION_NAME_REDUX
-//            // Or use same version as in android branch
-//            // version = android.defaultConfig.versionName
-//
-//            artifact bundleReleaseAar
-//            artifact sourceJar
-//
-//            pom.withXml {
-//                def dependenciesNode = asNode().appendNode('dependencies')
-//
-//                // List all compile dependencies and write to POM
-//                configurations.compile.getAllDependencies().each { Dependency dep ->
-//                    if (dep.group == null || dep.version == null || dep.name == null || dep.name == "unspecified")
-//                        return // ignore invalid dependencies
-//
-//                    def dependencyNode = dependenciesNode.appendNode('dependency')
-//                    dependencyNode.appendNode('groupId', dep.group)
-//                    dependencyNode.appendNode('artifactId', dep.name)
-//                    dependencyNode.appendNode('version', dep.version)
-//                    dependencyNode.appendNode('scope', 'compile')
-//
-//                    if (!dep.transitive) {
-//                        // If this dependency is transitive, we should force exclude all its dependencies them from the POM
-//                        def exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
-//                        exclusionNode.appendNode('groupId', '*')
-//                        exclusionNode.appendNode('artifactId', '*')
-//                    } else if (!dep.properties.excludeRules.empty) {
-//                        // Otherwise add specified exclude rules
-//                        def exclusionsNode = dependencyNode.appendNode('exclusions')
-//                        dep.properties.excludeRules.each { ExcludeRule rule ->
-//                            def exclusionNode = exclusionsNode.appendNode('exclusion')
-//                            exclusionNode.appendNode('groupId', rule.group ?: '*')
-//                            exclusionNode.appendNode('artifactId', rule.module ?: '*')
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
 repositories {
     mavenCentral()
 }
