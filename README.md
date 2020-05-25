@@ -12,42 +12,35 @@ This is a port of the [Redux](https://redux.js.org/) paradigm for building apps,
 
 ### Setup
 
-To begin with, create an implementation of the `State` interface:
+To begin with, create implementations of the `State`  & `Action` interfaces:
 ````java
 public class AppState implements State<AppState> {
 
     public String screenState;
-
+    
+    // All internal objects/primitives must be synced here, for preventing leaks & changing state references on every update.
     @Override
     public void sync(@NonNull AppState currentState) {
         this.screenState = currentState.screenState;
     }
 }
 ````
-As well as the `Action` interface:
+
 ````java
 public class AppAction implements Action {
 
-    @NonNull
-    public String type;
-
-    @NonNull
+    @Nullable
     public HashMap<String, String> payload; // This can be anything. The Action interface only enforces the #getType() method.
-
-    public AppAction(@NonNull String type, @NonNull HashMap<String, String> payload) {
-        this.type = type;
-        this.payload = payload;
-    }
 
     @NonNull
     @Override
     public String getType() {
-        return type;
+        return "EXAMPLE_ACTION";
     }
 }
 ````
 
-Also, create a `Reducer` as follows:
+Then, create a `Reducer` as follows:
 ````java
 public class AppReducer implements Reducer<AppState, AppAction> {
     @NonNull
@@ -57,9 +50,9 @@ public class AppReducer implements Reducer<AppState, AppAction> {
         newState.sync(oldState);
 
         switch (action.getType()) {
-            case ChangeScreenAction.ACTION_CHANGE_SCREEN: {
+            case "CHANGE_SCREEN": {
                 String newScreen = ((ChangeScreenAction) action).getScreenName();
-                newState.setScreenState(TextUtils.isEmpty(newScreen) ? "DEFAULT_SCREEN" : newScreen);
+                newState.setScreenState(newScreen);
                 return newState;
             }
         }
@@ -69,7 +62,7 @@ public class AppReducer implements Reducer<AppState, AppAction> {
 ````
 
 
-Then, extend `ReduxViewModel` & implement the `initializeStore()` method:
+To initialize the Redux `Store`, extend `ReduxViewModel` & implement the `initializeStore()` method:
 
 ````java
 public class AppReduxViewModel extends ReduxViewModel<AppState, AppAction> {
@@ -109,7 +102,7 @@ The ReduxController constructor takes in the following arguments:
 ````java
 ReduxController(@NonNull Class<T> reduxViewModelClass, Observer<S> observer, @NonNull FragmentActivity activity, @NonNull LifecycleOwner lifecycleOwner, boolean distinctUntilChanged)
 ````
-Note that for enabling the `distinctUntilChanged` functionality (only getting updates when something is modified in the state), your app's state MUST implement `equals()` & `hashcode()` correctly.
+*Note that for enabling the `distinctUntilChanged` functionality (only getting redux store updates when the state is modified), your app's state MUST implement `equals()` & `hashcode()` correctly.
 
 You can also (optionally) create your `Middleware` as per your use case, and provide it to your `ReduxViewModel` implementation via the `initializeStore()` method above, for eg:
 
