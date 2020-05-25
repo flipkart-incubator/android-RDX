@@ -125,3 +125,5 @@ configure(install.repositories.mavenInstaller) {
 repositories {
     mavenCentral()
 }
+
+group='com.github.flipkart-incubator'
