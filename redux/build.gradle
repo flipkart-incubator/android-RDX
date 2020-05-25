@@ -1,0 +1,178 @@
+/*
+ * The Apache License
+ *
+ * Copyright (c) 2020 Flipkart Internet Pvt. Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ *
+ * You may obtain a copy of the License at
+ *
+ *    https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
+apply plugin: 'jacoco-android'
+
+jacoco {
+    toolVersion = "0.8.4"
+}
+
+
+android {
+    compileSdkVersion 28
+
+
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
+
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.1.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+
+    annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.1.0'
+
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.24.0'
+    testImplementation 'org.robolectric:robolectric:4.3'
+    testImplementation 'androidx.test:core:1.0.0'
+    androidTestImplementation 'org.mockito:mockito-android:2.24.0'
+    testImplementation 'org.robolectric:robolectric:4.3'
+    api "androidx.core:core-ktx:+"
+    api "androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+        maven { url "https://jitpack.io" }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.3.2'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
+        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.7.5'
+    }
+}
+
+apply plugin: 'maven-publish'
+apply plugin: 'com.github.dcendents.android-maven'
+
+configurations {
+    published
+}
+
+
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier "sources"
+}
+
+configure(install.repositories.mavenInstaller) {
+    pom.project {
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+    }
+}
+
+
+//publishing {
+//    repositories {
+//        maven {
+//            url ARTIFACTORY_REPO_URL + "libs-${project.version.endsWith('-SNAPSHOT') ? 'snapshots' : 'release'}-local"
+//        }
+//    }
+//    publications {
+//        maven(MavenPublication) {
+//            groupId ARTIFACTORY_GROUP
+//            artifactId 'redux'
+//            version VERSION_NAME_REDUX
+//            // Or use same version as in android branch
+//            // version = android.defaultConfig.versionName
+//
+//            artifact bundleReleaseAar
+//            artifact sourceJar
+//
+//            pom.withXml {
+//                def dependenciesNode = asNode().appendNode('dependencies')
+//
+//                // List all compile dependencies and write to POM
+//                configurations.compile.getAllDependencies().each { Dependency dep ->
+//                    if (dep.group == null || dep.version == null || dep.name == null || dep.name == "unspecified")
+//                        return // ignore invalid dependencies
+//
+//                    def dependencyNode = dependenciesNode.appendNode('dependency')
+//                    dependencyNode.appendNode('groupId', dep.group)
+//                    dependencyNode.appendNode('artifactId', dep.name)
+//                    dependencyNode.appendNode('version', dep.version)
+//                    dependencyNode.appendNode('scope', 'compile')
+//
+//                    if (!dep.transitive) {
+//                        // If this dependency is transitive, we should force exclude all its dependencies them from the POM
+//                        def exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+//                        exclusionNode.appendNode('groupId', '*')
+//                        exclusionNode.appendNode('artifactId', '*')
+//                    } else if (!dep.properties.excludeRules.empty) {
+//                        // Otherwise add specified exclude rules
+//                        def exclusionsNode = dependencyNode.appendNode('exclusions')
+//                        dep.properties.excludeRules.each { ExcludeRule rule ->
+//                            def exclusionNode = exclusionsNode.appendNode('exclusion')
+//                            exclusionNode.appendNode('groupId', rule.group ?: '*')
+//                            exclusionNode.appendNode('artifactId', rule.module ?: '*')
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
+repositories {
+    mavenCentral()
+}
