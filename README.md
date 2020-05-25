@@ -5,11 +5,7 @@
 This is a port of the [Redux](https://redux.js.org/) paradigm for building apps, built specifically for use on the Android platform. It uses native Android constructs such as Lifecycle Aware components, LiveData, ViewModels etc to achieve the Redux spec.
 
 <p align="center">
-<img src="https://github.fkinternal.com/ankit-w/redux-android/blob/supportLib/Redux%20Example.gif" width="550" height="400" style=""/> </p>
-
-
-## Class Diagram
-![](https://github.fkinternal.com/ankit-w/redux-android/blob/supportLib/Redux%20Android.png)
+<img src="https://github.com/flipkart-incubator/redux-android/blob/master/Redux%20Example.gif" width="550" height="400" style=""/> </p>
 
 ### Extra stuff
 
