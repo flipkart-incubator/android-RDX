@@ -8,6 +8,7 @@ This is a port of the [Redux](https://redux.js.org/) paradigm for building apps,
 
 <p align="center">
 <img src="https://github.com/flipkart-incubator/redux-android/blob/master/Redux%20Example.gif" width="550" height="400" style=""/> </p>
+<sub>(Image source: https://github.com/reduxjs/redux/issues/653#issuecomment-216844781)</sub>
 
 #### NOTE: This library is currently in beta stage. The APIs are mostly frozen, but internals may change. 
 
