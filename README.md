@@ -6,45 +6,105 @@ This is a port of the [Redux](https://redux.js.org/) paradigm for building apps,
 <p align="center">
 <img src="https://github.com/flipkart-incubator/redux-android/blob/master/Redux%20Example.gif" width="550" height="400" style=""/> </p>
 
-#### NOTE: This library is currently in beta stage. The APIs are frozen, but internals may change. 
+#### NOTE: This library is currently in beta stage. The APIs are mostly frozen, but internals may change. 
 
 ## API
 
-To begin with, create an implementation of the `State` interface:
+### Setup
+
+To begin with, create implementations of the `State`  & `Action` interfaces:
 ````java
 public class AppState implements State<AppState> {
 
     public String screenState;
-
+    
+    // All internal objects/primitives must be synced here, for preventing leaks & changing state references on every update.
     @Override
     public void sync(@NonNull AppState currentState) {
         this.screenState = currentState.screenState;
     }
 }
 ````
-As well as the `Action` interface:
+
 ````java
 public class AppAction implements Action {
 
-    @NonNull
-    public String type;
-
-    @NonNull
-    public HashMap<String, String> payload;
-
-    public AppAction(@NonNull String type, @NonNull HashMap<String, String> payload) {
-        this.type = type;
-        this.payload = payload;
-    }
+    @Nullable
+    public HashMap<String, String> payload; // This can be anything. The Action interface only enforces the #getType() method.
 
     @NonNull
     @Override
     public String getType() {
-        return type;
+        return "EXAMPLE_ACTION";
     }
 }
 ````
-Then (optionally), create your `Middleware` as per your use case:
+
+Then, create a `Reducer` as follows:
+````java
+public class AppReducer implements Reducer<AppState, AppAction> {
+    @NonNull
+    @Override
+    public AppState reduce(@NonNull AppState oldState, @NonNull AppAction action) {
+        AppState newState = new AppState();
+        newState.sync(oldState);
+
+        switch (action.getType()) {
+            case "CHANGE_SCREEN": {
+                String newScreen = ((ChangeScreenAction) action).getScreenName();
+                newState.setScreenState(newScreen);
+                return newState;
+            }
+        }
+        return newState;
+    }
+}
+````
+
+
+To initialize the Redux `Store`, extend `ReduxViewModel` & implement the `initializeStore()` method:
+
+````java
+public class AppReduxViewModel extends ReduxViewModel<AppState, AppAction> {
+
+    @NonNull
+    @Override
+    protected Store<AppState, AppAction> initializeStore() {
+        AppState initState = new AppState(); //initialize your state here.
+        return new Store<>(initState, new AppStateCreator(), new AppReducer(), new LoggingMiddleware());
+    }
+}
+````
+
+The Store constructor takes in the following arguments:
+````java
+Store(@NonNull S initialState, @NonNull Reducer<S, A> reducer, @Nullable Middleware<S, A>... middlewareList)
+````
+
+Finally, instantiate a new `ReduxController` inside your Activity/Fragment:
+````java
+public class MainActivity extends FragmentActivity {
+ ...
+    @Nullable
+    ReduxController<AppState, AppAction, AppReduxViewModel> reduxController;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+        reduxController = new ReduxController<>(AppReduxViewModel.class, this::updateState, this, this, true);
+    }
+
+    public void updateState(@Nullable AppState state) {...}
+}
+````
+The ReduxController constructor takes in the following arguments:
+````java
+ReduxController(@NonNull Class<T> reduxViewModelClass, Observer<S> observer, @NonNull FragmentActivity activity, @NonNull LifecycleOwner lifecycleOwner, boolean distinctUntilChanged)
+````
+*Note that for enabling the `distinctUntilChanged` functionality (only getting redux store updates when the state is modified), your app's state MUST implement `equals()` & `hashcode()` correctly.
+
+You can also (optionally) create your `Middleware` as per your use case, and provide it to your `ReduxViewModel` implementation via the `initializeStore()` method above, for eg:
 
 ````java
 public class LoggingMiddleware implements Middleware<AppState, AppAction> {
@@ -59,52 +119,11 @@ public class LoggingMiddleware implements Middleware<AppState, AppAction> {
 }
 ````
 
-Then, extend `ReduxViewModel` & implement the `initializeStore()` method:
 
-````java
-public class AppReduxViewModel extends ReduxViewModel<AppState, AppAction> {
+### Usage
 
-    @NonNull
-    @Override
-    protected Store<AppState, AppAction> initializeStore() {
-        AppState initState = new AppState();
-        initState.screenState = "DEFAULT";
-        return new Store<>(initState, new AppStateCreator(), new AppReducer(), new LoggingMiddleware());
-    }
-}
-````
-
-The Store constructor takes in the following arguments:
-````java
-Store(@NonNull S initialState, @NonNull StateCreator<S> stateCreator, @NonNull Reducer<S, A> reducer, @Nullable Middleware<S, A>... middlewareList)
-````
-
-Finally, implement the `ReduxComponent` interface & instantiate a new `ReduxController` inside your Activity/Fragment:
-````java
-public class MainActivity extends FragmentActivity implements ReduxComponent<AppState, AppAction, AppReduxViewModel> {
- ...
-    @Nullable
-    ReduxController<AppState, AppAction, AppReduxViewModel> reduxController;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-        reduxController = new ReduxController<>(this, this, this);
-    }
-
-    @NonNull
-    @Override
-    public Class<AppReduxViewModel> getReduxViewModelClass() {
-        return AppReduxViewModel.class;
-    }
-
-    @Override
-    public void updateState(@Nullable AppState state) {...}
-}
-````
-
-Then, to dispatch an action, use the `dispatch` function provided by the controller, wherever necessary:
+After the setup flow above, we are now ready to 'dispatch' an action & observe on state updates.
+To dispatch an action, use the `dispatch` function provided by the controller, wherever necessary.:
 
 ````java
    button.setOnClickListener(v -> {
@@ -114,11 +133,12 @@ Then, to dispatch an action, use the `dispatch` function provided by the control
         reduxController.dispatch(new AppAction("CHANGE_SCREEN", payload));
     });
 ````
+You can also expose the redux controller to any MVC/VM/Whatever instance via the Activity `context`, for executing dispatches appropriately.
 
-Once this dispatch is consumed by the Store & a new state has been reduced, the Activity/Fragment will be notified via the `updateState` callback implemented via the redux component:
+Once this dispatch is consumed by the Store & a new state has been reduced, the Activity/Fragment will be notified via the `Observer<S extends State>` callback provided to the `ReduxController`:
+
 ````java
-
-    @Override
+    // handle state updates here.
     public void updateState(@Nullable AppState state) {
         if (textView != null && state != null) {
             textView.setText(state.screenState);
