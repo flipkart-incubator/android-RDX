@@ -71,7 +71,7 @@ public class AppReduxViewModel extends ReduxViewModel<AppState, AppAction> {
     @Override
     protected Store<AppState, AppAction> initializeStore() {
         AppState initState = new AppState(); //initialize your state here.
-        return new Store<>(initState, new AppStateCreator(), new AppReducer(), new LoggingMiddleware());
+        return new Store<>(initState, new AppReducer(), new LoggingMiddleware());
     }
 }
 ````
