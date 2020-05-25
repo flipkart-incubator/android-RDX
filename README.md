@@ -1,5 +1,4 @@
-# Redux-Android 
-###### (name TBD)
+# Android-RDX
 
 ### Redux on Android
 This is a port of the [Redux](https://redux.js.org/) paradigm for building apps, built specifically for use on the Android platform. It uses native Android constructs such as Lifecycle Aware components, LiveData, ViewModels etc to achieve the Redux spec.
@@ -7,24 +6,7 @@ This is a port of the [Redux](https://redux.js.org/) paradigm for building apps,
 <p align="center">
 <img src="https://github.com/flipkart-incubator/redux-android/blob/master/Redux%20Example.gif" width="550" height="400" style=""/> </p>
 
-### Extra stuff
-
-A lot of the things seen above belong outside the Redux implementation, and are hence explained here:
-
-#### ReduxViewModel
-An extension of the Android ViewModel API. Composes the actual Redux Store & subscribes to it. The core Redux implementation is agnostic of Android lifecycles (for Activities/Fragments). This is the bridge between the Redux world and the Android view layer. It is also responsible for initializing the Store.
-
-#### ReduxController
-API for subscribing to and receiving updates from the 'Store'. Composes 'ReduxViewModel' to hook up & manage things internally. Should be composed inside your Activity/Fragment.
-
-#### DispatchManager
-It's responsibilities include maintaining the middleware chain & handling the flow of actions through it.
-
-#### DispatchThreadProcessor
-Since Android is multi-threaded, we take advantage of it & execute actions on the entire dispatch chain in a background thread. The results are posted back to the main thread, where the Action originated.
-
-##### StateManager
-Handles maintaining multiple instances of the state. A crass object pool with just two values, which it keeps alternating. Debateably necessary for ensuring that no one holds the state/modifies it.
+#### NOTE: This library is currently in beta stage. The APIs are frozen, but internals may change. 
 
 ## API
 
