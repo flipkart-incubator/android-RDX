@@ -9,6 +9,27 @@ This is a port of the [Redux](https://redux.js.org/) paradigm for building apps,
 
 #### NOTE: This library is currently in beta stage. The APIs are mostly frozen, but internals may change. 
 
+## Getting Started
+
+Add the jitpack repository to your root build.gradle
+
+```kotlin
+allprojects {
+  repositories {
+    maven { url "https://jitpack.io" }
+  }
+}
+```
+
+Add the android-RDX dependency:
+
+```kotlin
+dependencies {
+        implementation 'com.github.flipkart-incubator:android-RDX:v1.0.0'
+    }
+```
+
+
 ## API
 
 ### Setup
@@ -85,7 +106,7 @@ Store(@NonNull S initialState, @NonNull Reducer<S, A> reducer, @Nullable Middlew
 Finally, instantiate a new `ReduxController` inside your Activity/Fragment:
 ````java
 public class MainActivity extends FragmentActivity {
- ...
+
     @Nullable
     ReduxController<AppState, AppAction, AppReduxViewModel> reduxController;
 
@@ -146,7 +167,6 @@ Once this dispatch is consumed by the Store & a new state has been reduced, the 
         }
     }
 ````
-
 
 ## License
 
