@@ -7,11 +7,11 @@ android:
     - tools
     - platform-tools
     - build-tools-28.0.3
-    - android-26
+    - android-29
     - extra-android-x
     - extra-android-m2repository
     - extra-google-m2repository
-script:
-  - ./gradlew build jacocoTestReport
-# after_success:
-#   - bash <(curl -s https://codecov.io/bash)
+# script:
+#   - ./gradlew build jacocoTestReport
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
