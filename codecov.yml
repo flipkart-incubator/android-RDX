@@ -1,0 +1,2 @@
+ignore:
+  - "android-RDX/app/**/*"  # ignore folders and all its contents
