@@ -27,12 +27,8 @@ jacoco {
     toolVersion = "0.8.4"
 }
 
-
 android {
     compileSdkVersion 29
-
-
-
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 29
@@ -104,6 +100,38 @@ configurations {
     published
 }
 
+task codeCoverageReport(type: JacocoReport) {
+
+    // Gather execution data from all subprojects
+    // (change this if you e.g. want to calculate unit test/integration test coverage separately)
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+    // Add all relevant sourcesets from the subprojects
+    subprojects.each {
+        sourceSets it.sourceSets.main
+    }
+
+    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/javac/debug/classes/com/flipkart", excludes: fileFilter)
+    def mainSrc = "${project.projectDir}/src/main/java/com/flipkart"
+
+    sourceDirectories = files([mainSrc])
+    classDirectories = files([debugTree])
+
+    reports {
+        xml.enabled true
+        html.enabled true
+        html.destination "${buildDir}/reports/jacoco"
+        csv.enabled false
+    }
+}
+
+// always run the tests before generating the report
+codeCoverageReport.dependsOn {
+    subprojects*.test
+}
+
+
 
 task sourceJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
@@ -126,4 +154,4 @@ repositories {
     mavenCentral()
 }
 
-group='com.github.flipkart-incubator'
+group = 'com.github.flipkart-incubator'
