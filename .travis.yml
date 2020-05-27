@@ -1,4 +1,4 @@
-sudo: true
+sudo: false
 language: android
 jdk:
   - oraclejdk8
@@ -8,6 +8,8 @@ env:
     - MALLOC_ARENA_MAX=2
     # wait up to 10 minutes for adb to connect to emulator
     - ADB_INSTALL_TIMEOUT=10
+    
+
 android:
   components:
     - tools
@@ -16,8 +18,13 @@ android:
     - android-29
     - extra-android-x
     - extra-android-m2repository
-    - extra-google-m2repository
+    - extra-google-m2repository]
   script:
     - ./gradlew build jacocoTestReport
+before_script:
+  - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
+  - emulator -avd test -no-skin -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
 after_success:
   - bash <(curl -s https://codecov.io/bash)
