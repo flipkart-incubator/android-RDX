@@ -11,6 +11,12 @@ android:
     - extra-android-x
     - extra-android-m2repository
     - extra-google-m2repository
+    env:
+  global:
+    # switch glibc to a memory conserving mode
+    - MALLOC_ARENA_MAX=2
+    # wait up to 10 minutes for adb to connect to emulator
+    - ADB_INSTALL_TIMEOUT=10
   script:
     - ./gradlew build jacocoTestReport
 after_success:
