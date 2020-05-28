@@ -1,6 +1,7 @@
 # Android-RDX
 [![](https://jitpack.io/v/flipkart-incubator/android-RDX.svg)](https://jitpack.io/#flipkart-incubator/android-RDX)
 [![Build Status](https://travis-ci.org/flipkart-incubator/android-RDX.svg?branch=master)](https://travis-ci.org/flipkart-incubator/android-RDX)
+[![codecov.io](https://codecov.io/github/flipkart-incubator/android-RDX/branch/master/graph/badge.svg)](https://codecov.io/github/flipkart-incubator/android-RDX)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 
